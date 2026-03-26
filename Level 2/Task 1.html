@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Framework-Powered UI Architecture</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            scroll-behavior: smooth;
+        }
+
+        /* Navbar Enhancements */
+        .navbar {
+            backdrop-filter: blur(10px);
+            background-color: rgba(13, 17, 23, 0.8) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #7928CA, #FF0080);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Hero Section */
+        #home {
+            padding: 8rem 0 4rem;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-weight: 800;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 1rem;
+        }
+
+        /* Cards */
+        .custom-card {
+            background-color: #161b22;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            height: 100%;
+        }
+
+        .custom-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(121, 40, 202, 0.2);
+            border-color: rgba(255, 0, 128, 0.3);
+        }
+
+        .custom-card .card-img-top {
+            height: 220px;
+            object-fit: cover;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.6s ease;
+        }
+
+        .custom-card:hover .card-img-top {
+            transform: scale(1.08);
+        }
+
+        .img-wrapper {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #fff;
+            z-index: 2;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+            background-color: #161b22;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-title {
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-text {
+            color: #8b949e;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-gradient {
+            background: linear-gradient(90deg, #7928CA, #FF0080);
+            border: none;
+            color: white;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 0.5rem 1.5rem;
+            transition: opacity 0.3s ease, transform 0.2s;
+        }
+
+        .btn-gradient:hover {
+            opacity: 0.9;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Modal Customization */
+        .modal-content {
+            background-color: #161b22;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-title-icon {
+            background: linear-gradient(90deg, #7928CA, #FF0080);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-right: 10px;
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2.5rem 0;
+            margin-top: 5rem;
+            background-color: #090c10;
+        }
+    </style>
+</head>
+<body data-bs-spy="scroll" data-bs-target=".navbar">
+
+    <!-- Responsive Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#home">
+                <i class="fa-solid fa-layer-group me-2"></i>NexusUI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="Task 1.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Features.html">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Components.html">Components</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Task 2.html">Task 2 (Adaptive UI)</a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <a href="Features.html" class="btn btn-outline-light btn-sm mt-1">Get Started</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section container">
+        <h1 class="hero-title">Adaptive Grid & Cards</h1>
+        <p class="lead text-secondary mx-auto" style="max-width: 650px;">
+            A modern, fully responsive UI architecture powered by Bootstrap's robust grid system and customizable component ecosystem. Explore the interactive modules below.
+        </p>
+    </section>
+
+    <!-- Main Grid Section -->
+    <main id="features" class="container mb-5 pb-5 pt-3">
+        <div class="row g-4">
+            
+            <!-- Card 1 -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card custom-card">
+                    <div class="img-wrapper">
+                        <span class="card-badge"><i class="fa-solid fa-bolt text-warning me-1"></i> Fast</span>
+                        <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="card-img-top" alt="Performance Optimization">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Performance Optimization</h5>
+                        <p class="card-text flex-grow-1">Deliver lightning-fast experiences with optimized layouts and intelligent caching strategies built into the core.</p>
+                        <div class="d-flex align-items-center justify-content-between mt-auto">
+                            <span class="text-secondary small"><i class="fa-regular fa-clock me-1"></i> 5 min read</span>
+                            <button class="btn btn-gradient btn-sm" data-bs-toggle="modal" data-bs-target="#modal1">Read More</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div id="components" class="col-12 col-md-6 col-lg-4">
+                <div class="card custom-card">
+                    <div class="img-wrapper">
+                        <span class="card-badge"><i class="fa-solid fa-mobile-screen text-info me-1"></i> Responsive</span>
+                        <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="card-img-top" alt="Fluid Architecture">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Fluid Grid Architecture</h5>
+                        <p class="card-text flex-grow-1">Seamlessly adapting to any screen size. Mobile-first design principles ensure your content looks great everywhere.</p>
+                        <div class="d-flex align-items-center justify-content-between mt-auto">
+                            <span class="text-secondary small"><i class="fa-regular fa-clock me-1"></i> 3 min read</span>
+                            <button class="btn btn-gradient btn-sm" data-bs-toggle="modal" data-bs-target="#modal2">Read More</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card custom-card">
+                    <div class="img-wrapper">
+                        <span class="card-badge"><i class="fa-solid fa-palette text-danger me-1"></i> Design</span>
+                        <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&q=80" class="card-img-top" alt="Beautiful UI">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Beautifully Crafted UI</h5>
+                        <p class="card-text flex-grow-1">Focus on aesthetic perfection with carefully chosen typography, subtle animations, and deep dark mode integrations.</p>
+                        <div class="d-flex align-items-center justify-content-between mt-auto">
+                            <span class="text-secondary small"><i class="fa-regular fa-clock me-1"></i> 6 min read</span>
+                            <button class="btn btn-gradient btn-sm" data-bs-toggle="modal" data-bs-target="#modal3">Read More</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card custom-card">
+                    <div class="img-wrapper">
+                        <span class="card-badge"><i class="fa-solid fa-shield-halved text-success me-1"></i> Secure</span>
+                        <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="card-img-top" alt="Enterprise Security">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Enterprise Security</h5>
+                        <p class="card-text flex-grow-1">Built with modern security standards in mind, providing a safe architecture for sensitive data and user privacy.</p>
+                        <div class="d-flex align-items-center justify-content-between mt-auto">
+                            <span class="text-secondary small"><i class="fa-regular fa-clock me-1"></i> 4 min read</span>
+                            <button class="btn btn-gradient btn-sm" data-bs-toggle="modal" data-bs-target="#modal4">Read More</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card custom-card">
+                    <div class="img-wrapper">
+                        <span class="card-badge"><i class="fa-brands fa-accessible-icon text-primary me-1"></i> A11y</span>
+                        <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="card-img-top" alt="Accessibility">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Fully Accessible</h5>
+                        <p class="card-text flex-grow-1">WCAG compliant elements ensure that your application can be enjoyed by everyone, regardless of disability.</p>
+                        <div class="d-flex align-items-center justify-content-between mt-auto">
+                            <span class="text-secondary small"><i class="fa-regular fa-clock me-1"></i> 8 min read</span>
+                            <button class="btn btn-gradient btn-sm" data-bs-toggle="modal" data-bs-target="#modal5">Read More</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card custom-card">
+                    <div class="img-wrapper">
+                        <span class="card-badge"><i class="fa-solid fa-code-branch text-white me-1"></i> Modular</span>
+                        <img src="https://images.unsplash.com/photo-1605379399642-870262d3d051?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="card-img-top" alt="Modularity">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Component Reusability</h5>
+                        <p class="card-text flex-grow-1">A highly modular structure allows you to scale your application quickly without duplicating code or effort.</p>
+                        <div class="d-flex align-items-center justify-content-between mt-auto">
+                            <span class="text-secondary small"><i class="fa-regular fa-clock me-1"></i> 2 min read</span>
+                            <button class="btn btn-gradient btn-sm" data-bs-toggle="modal" data-bs-target="#modal6">Read More</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer text-center">
+        <div class="container">
+            <h4 class="mb-3 text-white"><i class="fa-solid fa-layer-group me-2" style="color: #FF0080;"></i>NexusUI</h4>
+            <p class="text-secondary mb-0">© 2026 NexusUI Architecture. Built with Bootstrap 5. All interactive elements functional.</p>
+        </div>
+    </footer>
+
+
+    <!-- ==========================================
+         MODALS FOR "READ MORE" BUTTONS
+    ========================================== -->
+
+    <!-- Modal 1: Performance -->
+    <div class="modal fade" id="modal1" tabindex="-1" aria-labelledby="modal1Label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="modal1Label"><i class="fa-solid fa-bolt modal-title-icon"></i> Performance Optimization</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" class="img-fluid rounded mb-3" alt="Performance">
+                    <h5>Why Performance Matters</h5>
+                    <p>In modern web applications, every millisecond counts. High performance directly correlates to improved user retention, better SEO rankings, and higher conversion rates.</p>
+                    <p><strong>Our approach involves:</strong></p>
+                    <ul>
+                        <li>Minifying CSS and JavaScript payloads.</li>
+                        <li>Lazy-loading heavy assets and images off-screen.</li>
+                        <li>Utilizing CDN networks to serve assets globally with low latency.</li>
+                        <li>Pre-fetching critical resources during idle browser time.</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-gradient" data-bs-dismiss="modal">Got it!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Responsive -->
+    <div class="modal fade" id="modal2" tabindex="-1" aria-labelledby="modal2Label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="modal2Label"><i class="fa-solid fa-mobile-screen modal-title-icon"></i> Fluid Grid Architecture</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" class="img-fluid rounded mb-3" alt="Responsive Design">
+                    <h5>Mobile-First Strategy</h5>
+                    <p>Over 60% of web traffic originates from mobile devices. This framework relies on a 12-column flexbox grid designed mobile-first.</p>
+                    <p><strong>Breakpoints utilized:</strong></p>
+                    <ul>
+                        <li><strong>Mobile (sm):</strong> Elements stack vertically automatically to provide an easy scroll experience.</li>
+                        <li><strong>Tablets (md):</strong> Elements split into columns (like this grid) for balanced content.</li>
+                        <li><strong>Desktop (lg/xl):</strong> Fully expanded complex UI components with enhanced hover interactions.</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-gradient" data-bs-dismiss="modal">Understood</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3: Design -->
+    <div class="modal fade" id="modal3" tabindex="-1" aria-labelledby="modal3Label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="modal3Label"><i class="fa-solid fa-palette modal-title-icon"></i> Beautifully Crafted UI</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1200&q=80" class="img-fluid rounded mb-3" alt="Design">
+                    <h5>Aesthetic Perfection</h5>
+                    <p>Design is not just what it looks like; design is how it works. Our UI balances whitespace, typography, and contrast to provide an enjoyable visual experience.</p>
+                    <p><strong>Design Tokens:</strong></p>
+                    <ul>
+                        <li><strong>Typography:</strong> 'Outfit' font family for a modern, geometric look.</li>
+                        <li><strong>Colors:</strong> Deep space grays paired with vibrant purple/pink gradients (#7928CA → #FF0080).</li>
+                        <li><strong>Dark Mode:</strong> Native support built-in to reduce eye strain and modernize the feel.</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-gradient" data-bs-dismiss="modal">Looks Good!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 4: Secure -->
+    <div class="modal fade" id="modal4" tabindex="-1" aria-labelledby="modal4Label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="modal4Label"><i class="fa-solid fa-shield-halved modal-title-icon"></i> Enterprise Security</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" class="img-fluid rounded mb-3" alt="Security">
+                    <h5>Built for Safety</h5>
+                    <p>A beautiful interface means nothing if the underlying architecture is vulnerable. Security is handled natively through strict DOM practices and modern browser standards.</p>
+                    <p><strong>Security Features:</strong></p>
+                    <ul>
+                        <li>XSS (Cross-Site Scripting) protection built natively into the UI component rendering.</li>
+                        <li>No inline unsafe scripts; strict CSP (Content Security Policy) readiness.</li>
+                        <li>HTTPS/SSL enforced asset loading (CDNs).</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-gradient" data-bs-dismiss="modal">I Feel Safe</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 5: A11y -->
+    <div class="modal fade" id="modal5" tabindex="-1" aria-labelledby="modal5Label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="modal5Label"><i class="fa-brands fa-accessible-icon modal-title-icon"></i> Fully Accessible</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" class="img-fluid rounded mb-3" alt="Accessible">
+                    <h5>Web for Everyone</h5>
+                    <p>Accessibility (A11y) ensures that users of all abilities can navigate, understand, and interact with the application seamlessly.</p>
+                    <p><strong>A11y Implementations:</strong></p>
+                    <ul>
+                        <li>ARIA labels on all interactive non-text elements (modals, buttons, toggles).</li>
+                        <li>High contrast ratio for text readability.</li>
+                        <li>Full keyboard navigation support (Tab indexing).</li>
+                        <li>Screen-reader friendly HTML semantics (`nav`, `main`, `section`).</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-gradient" data-bs-dismiss="modal">Awesome</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 6: Modular -->
+    <div class="modal fade" id="modal6" tabindex="-1" aria-labelledby="modal6Label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="modal6Label"><i class="fa-solid fa-code-branch modal-title-icon"></i> Component Reusability</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <img src="https://images.unsplash.com/photo-1605379399642-870262d3d051?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" class="img-fluid rounded mb-3" alt="Modular Code">
+                    <h5>Don't Repeat Yourself (DRY)</h5>
+                    <p>The architecture heavily relies on reusable CSS classes and Bootstrap components. This means entire structures can be duplicated and customized simply by changing internal text.</p>
+                    <p><strong>Benefits of Modularity:</strong></p>
+                    <ul>
+                        <li>Reduces overall CSS bundle size.</li>
+                        <li>Ensures 100% UI consistency across different pages.</li>
+                        <li>Makes updating the design system incredibly fast.</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-gradient" data-bs-dismiss="modal">Great</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle with Popper (Required for Modals & Navbar) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Smooth scrolling offset for fixed navbar
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 70, // 70px offset for the fixed navbar
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

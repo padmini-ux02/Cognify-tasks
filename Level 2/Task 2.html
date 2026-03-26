@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Web Experience | Pure CSS Smart Navigation</title>
+    
+    <!-- Modern Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==========================================
+           1. CSS Variables & Reset (Mobile First)
+        ========================================== */
+        :root {
+            --bg-color: #0d1117;
+            --surface-color: #161b22;
+            --surface-hover: #1f252e;
+            --text-main: #f0f6fc;
+            --text-muted: #8b949e;
+            --accent-primary: #7928CA;
+            --accent-secondary: #FF0080;
+            --accent-gradient: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            --border-color: rgba(255, 255, 255, 0.1);
+            --nav-height: 70px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        /* Responsive Typography using Clamp */
+        h1 { font-size: clamp(2.5rem, 8vw, 4.5rem); line-height: 1.1; margin-bottom: 1rem; font-weight: 800; }
+        h2 { font-size: clamp(1.8rem, 5vw, 2.5rem); margin-bottom: 1.5rem; font-weight: 700; }
+        h3 { font-size: clamp(1.2rem, 3vw, 1.5rem); margin-bottom: 0.8rem; font-weight: 600; }
+        p { font-size: clamp(0.95rem, 2vw, 1.1rem); color: var(--text-muted); }
+
+        /* ==========================================
+           2. Intelligent Mobile Navigation System (Pure CSS)
+        ========================================== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--nav-height);
+            background: rgba(13, 17, 23, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5%;
+            transition: all 0.3s ease;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            z-index: 1001; /* Stay above overlay */
+        }
+
+        /* Hide the Checkbox Hack */
+        .nav-toggle-input {
+            display: none;
+        }
+
+        /* Hamburger Icon Styling */
+        .nav-hamburger {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 21px;
+            cursor: pointer;
+            z-index: 1001; /* Stay above overlay */
+        }
+
+        .nav-hamburger span {
+            display: block;
+            width: 100%;
+            height: 3px;
+            background-color: var(--text-main);
+            border-radius: 3px;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        /* Nav Menu (Mobile Default: Hidden Drawer) */
+        .nav-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 75%;
+            max-width: 400px;
+            height: 100vh;
+            background-color: var(--surface-color);
+            border-left: 1px solid var(--border-color);
+            padding: calc(var(--nav-height) + 2rem) 2rem 2rem;
+            transition: right 0.4s cubic-bezier(0.77, 0.2, 0.05, 1.0);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+        }
+
+        .nav-link {
+            font-size: 1.25rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            display: inline-block;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-secondary);
+        }
+
+        .nav-btn {
+            background: var(--accent-gradient);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .nav-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        /* Overlay Background */
+        .nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+            z-index: 999;
+        }
+
+        /* ==== PURE CSS INTERACTION (The Checkbox Hack) ==== */
+        /* 1. Show Drawer */
+        .nav-toggle-input:checked ~ .nav-menu {
+            right: 0;
+        }
+        
+        /* 2. Show Overlay */
+        .nav-toggle-input:checked ~ .nav-overlay {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 3. Hamburger to "X" Animation */
+        .nav-toggle-input:checked ~ .nav-hamburger span:nth-child(1) {
+            transform: translateY(9px) rotate(45deg);
+            background-color: var(--accent-secondary);
+        }
+        .nav-toggle-input:checked ~ .nav-hamburger span:nth-child(2) {
+            opacity: 0;
+            transform: scale(0);
+        }
+        .nav-toggle-input:checked ~ .nav-hamburger span:nth-child(3) {
+            transform: translateY(-9px) rotate(-45deg);
+            background-color: var(--accent-secondary);
+        }
+
+        /* Prevent scrolling when menu is open */
+        body:has(.nav-toggle-input:checked) {
+            overflow: hidden;
+        }
+
+
+        /* ==========================================
+           3. Layout Structure (Mobile First Base)
+        ========================================== */
+        
+        /* Container */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Custom Section Padding */
+        .section-padding {
+            padding: 6rem 0;
+        }
+
+        /* Hero Layout */
+        .hero {
+            padding-top: calc(var(--nav-height) + 4rem);
+            padding-bottom: 4rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .hero-img {
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(121, 40, 202, 0.2);
+            border: 1px solid var(--border-color);
+        }
+
+        /* CSS Grid Layout */
+        .grid-cards {
+            display: grid;
+            grid-template-columns: 1fr; /* Mobile: 1 column */
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        /* Card Component */
+        .card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border-color: rgba(255, 0, 128, 0.3);
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(121, 40, 202, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-secondary);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid var(--border-color);
+            padding: 3rem 0;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+
+        /* ==========================================
+           4. Responsive Breakpoints (Media Queries)
+        ========================================== */
+
+        /* TABLET OVERRIDES (577px - 992px) */
+        @media screen and (min-width: 577px) {
+            /* Adjust grid to 2 columns */
+            .grid-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* DESKTOP OVERRIDES (993px and above) */
+        @media screen and (min-width: 993px) {
+            /* 1. Transform Navigation to Horizontal */
+            .nav-hamburger, .nav-toggle-input, .nav-overlay {
+                display: none !important; /* Hide mobile toggles entirely */
+            }
+
+            .nav-menu {
+                position: static;
+                width: auto;
+                height: auto;
+                background-color: transparent;
+                border: none;
+                padding: 0;
+                flex-direction: row;
+                align-items: center;
+                gap: 2.5rem;
+                box-shadow: none;
+            }
+
+            .nav-link {
+                font-size: 1.05rem;
+            }
+
+            .nav-link::after {
+                content: '';
+                display: block;
+                width: 0;
+                height: 2px;
+                background: var(--accent-gradient);
+                transition: width 0.3s ease;
+                margin-top: 5px;
+            }
+
+            .nav-link:hover::after {
+                width: 100%;
+            }
+
+            /* 2. Hero Layout transforms to side-by-side Flexbox */
+            .hero {
+                flex-direction: row;
+                text-align: left;
+                padding-top: calc(var(--nav-height) + 6rem);
+                padding-bottom: 6rem;
+                gap: 4rem;
+            }
+
+            .hero-content {
+                flex: 1;
+            }
+
+            .hero-img-wrapper {
+                flex: 1;
+            }
+
+            /* 3. Grid transforms to 3 columns */
+            .grid-cards {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 🍔 Intelligent Nav System (Pure HTML/CSS) -->
+    <header class="navbar">
+        <a href="#" class="nav-logo">Nexus Adaptive</a>
+        
+        <!-- The Checkbox Toggle Hack -->
+        <input type="checkbox" id="nav-toggle" class="nav-toggle-input" aria-label="Toggle navigation menu">
+        
+        <!-- The Hamburger Icon -->
+        <label for="nav-toggle" class="nav-hamburger" aria-label="Menu" role="button" tabindex="0">
+            <span></span>
+            <span></span>
+            <span></span>
+        </label>
+
+        <!-- The Navigation Links -->
+        <nav class="nav-menu">
+            <a href="Task 1.html" class="nav-link">Task 1 (Bootstrap Frame)</a>
+            <a href="Features.html" class="nav-link">Features</a>
+            <a href="Components.html" class="nav-link">Components</a>
+            <a href="Task 2.html" class="nav-link" style="color: var(--accent-secondary);">Task 2 (Adaptive UI)</a>
+            <a href="Features.html" class="nav-btn">Explore Suite</a>
+        </nav>
+
+        <!-- The Mobile Overlay Background -->
+        <label for="nav-toggle" class="nav-overlay" aria-label="Close menu"></label>
+    </header>
+
+    <!-- 🌐 Main Layout Transformation Showcase -->
+    <main>
+        
+        <!-- Hero Section -->
+        <section id="home" class="container hero">
+            <div class="hero-content">
+                <h1>Fluid Design. <br>Flawless Experience.</h1>
+                <p style="margin-bottom: 2rem;">
+                    A completely responsive, device-adaptive interface powered entirely by advanced CSS mapping. Watch this layout smoothly transform from mobile to desktop without a single line of JavaScript.
+                </p>
+                <a href="#features" class="nav-btn">Explore Features</a>
+            </div>
+            <div class="hero-img-wrapper">
+                <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?w=1200&q=80" alt="Design workflow" class="hero-img">
+            </div>
+        </section>
+
+        <!-- Features Grid -->
+        <section id="features" class="container section-padding">
+            <div style="text-align: center; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: var(--accent-secondary);">Responsive CSS Grid</h2>
+                <p>Scaling perfectly on every device. This grid seamlessly converts from a 1-column stack on mobile, to 2 columns on tablets, and 3 columns on desktops.</p>
+            </div>
+            
+            <div class="grid-cards">
+                <!-- Card 1 -->
+                <div class="card">
+                    <div class="card-icon">1</div>
+                    <h3>Fluid Typography</h3>
+                    <p>Typography utilizes CSS `clamp()` functions, meaning that text strings dynamically grow and shrink natively alongside the viewport width.</p>
+                </div>
+                <!-- Card 2 -->
+                <div class="card">
+                    <div class="card-icon">2</div>
+                    <h3>Smart Navigation</h3>
+                    <p>The hamburger menu is built using a CSS-only checkbox hack. It transforms into an overlapping side drawer with a dark glass overlay strictly under 992 pixels.</p>
+                </div>
+                <!-- Card 3 -->
+                <div class="card">
+                    <div class="card-icon">3</div>
+                    <h3>No JavaScript</h3>
+                    <p>Complex interactions, animations, media layouts, and toggle states are executed using purely semantic HTML and advanced CSS pseudo-selectors.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer container">
+        <h3 class="nav-logo" style="margin-bottom: 0.5rem; font-size: 1.5rem;">Nexus Adaptive</h3>
+        <p>© 2026 Adaptive UI Demonstration. Built with Vanilla HTML/CSS.</p>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Components - Framework-Powered UI</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
+        }
+
+        .navbar {
+            backdrop-filter: blur(10px);
+            background-color: rgba(13, 17, 23, 0.8) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #7928CA, #FF0080);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-section {
+            padding: 8rem 0 4rem;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-weight: 800;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 1rem;
+        }
+        
+        /* Components page styling */
+        .component-card {
+            background-color: #161b22;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .component-title {
+            color: #fff;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+        }
+
+        .btn-gradient {
+            background: linear-gradient(90deg, #7928CA, #FF0080);
+            border: none;
+            color: white;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 0.5rem 1.5rem;
+            transition: opacity 0.3s ease, transform 0.2s;
+            display: inline-block;
+        }
+
+        .btn-gradient:hover {
+            opacity: 0.9;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2.5rem 0;
+            margin-top: 5rem;
+            background-color: #090c10;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="Task 1.html">
+                <i class="fa-solid fa-layer-group me-2"></i>NexusUI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="Task 1.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Features.html">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="Components.html">Components</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Task 2.html">Task 2 (Adaptive UI)</a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <a href="Features.html" class="btn btn-outline-light btn-sm mt-1">Get Started</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero-section container">
+        <h1 class="hero-title">Component Gallery</h1>
+        <p class="lead text-secondary mx-auto" style="max-width: 650px;">
+            A collection of ready-to-use, accessible UI components customized for our dark-mode framework aesthetic.
+        </p>
+    </section>
+
+    <!-- Content -->
+    <main class="container mb-5">
+        
+        <div class="row">
+            <!-- Left Column -->
+            <div class="col-lg-6">
+                
+                <!-- Buttons Card -->
+                <div class="component-card">
+                    <h4 class="component-title">Buttons</h4>
+                    <div class="d-flex flex-wrap gap-3 mb-4">
+                        <button class="btn btn-gradient">Primary Actions</button>
+                        <button class="btn btn-outline-light">Secondary Outline</button>
+                        <button class="btn btn-primary">Bootstrap Blue</button>
+                        <button class="btn btn-danger">Danger Action <i class="fa-solid fa-triangle-exclamation ms-1"></i></button>
+                        <button class="btn btn-success" disabled>Disabled State</button>
+                    </div>
+                </div>
+
+                <!-- Forms Card -->
+                <div class="component-card">
+                    <h4 class="component-title">Input Fields</h4>
+                    <form>
+                        <div class="mb-3">
+                            <label for="exampleInputEmail1" class="form-label text-white">Email address</label>
+                            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="name@example.com">
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleDataList" class="form-label text-white">Select framework</label>
+                            <select class="form-select" id="exampleDataList">
+                                <option selected>Open this select menu</option>
+                                <option value="1">Bootstrap 5</option>
+                                <option value="2">Bulma</option>
+                                <option value="3">Tailwind CSS</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="exampleCheck1" checked>
+                            <label class="form-check-label text-secondary" for="exampleCheck1">Enable dark mode globally</label>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+
+            <!-- Right Column -->
+            <div class="col-lg-6">
+                
+                <!-- Alerts & Badges -->
+                <div class="component-card">
+                    <h4 class="component-title">Alerts & Messaging</h4>
+                    <div class="alert alert-primary d-flex align-items-center" role="alert">
+                        <i class="fa-solid fa-circle-info me-3 fa-lg"></i>
+                        <div>
+                            <strong>Info:</strong> Network bandwidth update successfully deployed to edge nodes.
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-warning alert-dismissible fade show mt-3" role="alert">
+                        <strong>Warning!</strong> Your session is about to expire in 5 minutes.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <div class="mt-4">
+                        <span class="badge text-bg-primary fs-6 me-2 mb-2">Primary Tag</span>
+                        <span class="badge text-bg-success fs-6 me-2 mb-2">Resolved</span>
+                        <span class="badge text-bg-danger fs-6 me-2 mb-2">Critical Error</span>
+                        <span class="badge rounded-pill text-bg-dark border border-secondary fs-6 me-2 mb-2"><i class="fa-solid fa-star text-warning"></i> Beta Features</span>
+                    </div>
+                </div>
+
+                <!-- Progress & Spinners -->
+                <div class="component-card">
+                    <h4 class="component-title">Activity Indicators</h4>
+                    
+                    <p class="text-white mt-3 mb-2">Deployment Status (75%)</p>
+                    <div class="progress mb-4" role="progressbar" aria-label="Animated striped example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" style="width: 75%"></div>
+                    </div>
+
+                    <div class="d-flex align-items-center mt-4">
+                        <strong class="text-secondary" role="status">Compiling assets...</strong>
+                        <div class="spinner-border text-primary ms-auto" aria-hidden="true"></div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer text-center">
+        <div class="container">
+            <h4 class="mb-3 text-white"><i class="fa-solid fa-layer-group me-2" style="color: #FF0080;"></i>NexusUI</h4>
+            <p class="text-secondary mb-0">© 2026 NexusUI Architecture. Built with Bootstrap 5.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

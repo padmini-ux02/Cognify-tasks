@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Features - Framework-Powered UI</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
+        }
+
+        .navbar {
+            backdrop-filter: blur(10px);
+            background-color: rgba(13, 17, 23, 0.8) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #7928CA, #FF0080);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-section {
+            padding: 8rem 0 4rem;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-weight: 800;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 1rem;
+        }
+
+        .feature-block {
+            margin-bottom: 6rem;
+        }
+
+        .feature-block img {
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            transition: transform 0.4s ease;
+        }
+
+        .feature-block img:hover {
+            transform: scale(1.02);
+            border-color: rgba(121, 40, 202, 0.5);
+        }
+
+        .feature-icon-wrapper {
+            width: 60px;
+            height: 60px;
+            background: rgba(121, 40, 202, 0.15);
+            border: 1px solid rgba(121, 40, 202, 0.3);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #FF0080;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-gradient {
+            background: linear-gradient(90deg, #7928CA, #FF0080);
+            border: none;
+            color: white;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 0.5rem 1.5rem;
+            transition: opacity 0.3s ease, transform 0.2s;
+            display: inline-block;
+        }
+
+        .btn-gradient:hover {
+            opacity: 0.9;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2.5rem 0;
+            margin-top: 5rem;
+            background-color: #090c10;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="Task 1.html">
+                <i class="fa-solid fa-layer-group me-2"></i>NexusUI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="Task 1.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="Features.html">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Components.html">Components</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Task 2.html">Task 2 (Adaptive UI)</a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <a href="Features.html" class="btn btn-outline-light btn-sm mt-1">Get Started</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero-section container">
+        <h1 class="hero-title">Platform Features</h1>
+        <p class="lead text-secondary mx-auto" style="max-width: 650px;">
+            Deep dive into the core capabilities that power NexusUI. Built for scale, security, and uncompromising speed.
+        </p>
+    </section>
+
+    <!-- Content -->
+    <main class="container mb-5">
+        
+        <!-- Feature 1 -->
+        <div class="row align-items-center feature-block">
+            <div class="col-lg-6 mb-4 mb-lg-0 order-lg-2">
+                <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1000&q=80" alt="Code structure" class="img-fluid">
+            </div>
+            <div class="col-lg-6 pe-lg-5 order-lg-1">
+                <div class="feature-icon-wrapper">
+                    <i class="fa-solid fa-code"></i>
+                </div>
+                <h2>Next-Gen Code Architecture</h2>
+                <p class="text-secondary mt-3 mb-4">
+                    Our platform utilizes cutting-edge web standards combined with resilient component modeling. Write less code while maintaining a significantly higher level of modularity. Features strict typing integrations, built-in linters, and native DOM abstractions.
+                </p>
+                <ul class="list-unstyled text-white mb-4">
+                    <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i> Type-safe component props</li>
+                    <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i> Zero-configuration bundling</li>
+                    <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i> Automated code-splitting</li>
+                </ul>
+                <a href="#" class="btn btn-gradient">View Documentation</a>
+            </div>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="row align-items-center feature-block">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1000&q=80" alt="Dashboard analytics" class="img-fluid">
+            </div>
+            <div class="col-lg-6 ps-lg-5">
+                <div class="feature-icon-wrapper">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <h2>Real-Time Telemetry & Scaling</h2>
+                <p class="text-secondary mt-3 mb-4">
+                    Monitor thousands of active connections without sacrificing performance. Our integrated dashboard provides deep insights into user behavior, server loads, and edge caching metrics.
+                </p>
+                <ul class="list-unstyled text-white mb-4">
+                    <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i> Millisecond precision graphs</li>
+                    <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i> Global edge caching deployed automatically</li>
+                    <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i> 99.99% Guaranteed uptime SLI</li>
+                </ul>
+                <a href="#" class="btn btn-gradient">See Use Cases</a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer text-center">
+        <div class="container">
+            <h4 class="mb-3 text-white"><i class="fa-solid fa-layer-group me-2" style="color: #FF0080;"></i>NexusUI</h4>
+            <p class="text-secondary mb-0">© 2026 NexusUI Architecture. Built with Bootstrap 5.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
