@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Interactive JavaScript Micro-UI Components Suite — Color Button, Greeting System, and Smart Calculator." />
+  <title>JS Micro-UI Suite — Task 2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- =============================================
+       STYLES
+  ============================================== -->
+  <style>
+    /* ---------- Root Tokens ---------- */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:           #0d0f14;
+      --surface-1:    #13161e;
+      --surface-2:    #1a1e29;
+      --border:       rgba(255,255,255,0.07);
+      --border-hover: rgba(255,255,255,0.14);
+
+      --purple:       #8b5cf6;
+      --purple-lt:    #a78bfa;
+      --cyan:         #22d3ee;
+      --amber:        #f59e0b;
+      --green:        #10b981;
+      --pink:         #ec4899;
+
+      --text-1:  #f1f5f9;
+      --text-2:  #94a3b8;
+      --text-3:  #475569;
+
+      --radius-sm:  0.5rem;
+      --radius-md:  1rem;
+      --radius-lg:  1.5rem;
+      --radius-xl:  2rem;
+      --radius-pill:9999px;
+
+      --shadow-glow-purple: 0 0 32px rgba(139,92,246,0.35);
+      --shadow-glow-cyan:   0 0 32px rgba(34,211,238,0.35);
+      --shadow-glow-amber:  0 0 32px rgba(245,158,11,0.35);
+
+      --trans: 0.3s cubic-bezier(0.4,0,0.2,1);
+      --trans-bounce: 0.4s cubic-bezier(0.34,1.56,0.64,1);
+
+      --font:  'Inter', sans-serif;
+      --mono:  'JetBrains Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text-1);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ---------- Page Header ---------- */
+    .page-header {
+      text-align: center;
+      padding: 4.5rem 2rem 3rem;
+      position: relative;
+    }
+
+    .page-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(139,92,246,0.12), transparent 65%);
+      pointer-events: none;
+    }
+
+    .page-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(139,92,246,0.12);
+      border: 1px solid rgba(139,92,246,0.3);
+      color: var(--purple-lt);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.35rem 1rem;
+      border-radius: var(--radius-pill);
+      margin-bottom: 1.5rem;
+    }
+
+    .page-header h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.15;
+      background: linear-gradient(135deg, #fff 0%, var(--purple-lt) 60%, var(--cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .page-header p {
+      margin-top: 1rem;
+      color: var(--text-2);
+      font-size: 1.05rem;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ---------- Component Grid ---------- */
+    .components-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 1.75rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem 6rem;
+    }
+
+    /* ---------- Card ---------- */
+    .card {
+      background: var(--surface-1);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 2.25rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color var(--trans), transform var(--trans), box-shadow var(--trans);
+    }
+
+    .card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-4px);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+    }
+
+    /* Top accent line per card */
+    .card-purple::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--purple), var(--pink));
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    }
+
+    .card-purple:hover { box-shadow: var(--shadow-glow-purple); }
+
+    .card-cyan::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--cyan), var(--green));
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    }
+
+    .card-cyan:hover { box-shadow: var(--shadow-glow-cyan); }
+
+    .card-amber::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--amber), var(--pink));
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    }
+
+    .card-amber:hover { box-shadow: var(--shadow-glow-amber); }
+
+    /* Card Header */
+    .card-label {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .card-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .icon-purple { background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.25); }
+    .icon-cyan   { background: rgba(34,211,238,0.1);  border: 1px solid rgba(34,211,238,0.2);  }
+    .icon-amber  { background: rgba(245,158,11,0.1);  border: 1px solid rgba(245,158,11,0.2);  }
+
+    .card-meta h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-1);
+      letter-spacing: -0.2px;
+    }
+
+    .card-meta span {
+      font-size: 0.78rem;
+      color: var(--text-3);
+      font-weight: 500;
+    }
+
+    /* ---------- Shared Input Styles ---------- */
+    .field-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-2);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .field-input {
+      width: 100%;
+      padding: 0.78rem 1rem;
+      background: var(--surface-2);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      font-family: var(--font);
+      font-size: 0.95rem;
+      color: var(--text-1);
+      outline: none;
+      transition: border-color var(--trans), box-shadow var(--trans);
+    }
+
+    .field-input::placeholder { color: var(--text-3); }
+
+    .field-input:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(139,92,246,0.15);
+    }
+
+    .field-input.field-cyan:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(34,211,238,0.12);
+    }
+
+    .field-input.field-amber:focus {
+      border-color: var(--amber);
+      box-shadow: 0 0 0 3px rgba(245,158,11,0.12);
+    }
+
+    /* ---------- Shared Button Styles ---------- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 0.78rem 1.5rem;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font);
+      font-size: 0.93rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform var(--trans-bounce), box-shadow var(--trans), filter var(--trans);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0);
+      transition: background var(--trans);
+    }
+
+    .btn:hover::after { background: rgba(255,255,255,0.06); }
+    .btn:active { transform: scale(0.97) !important; }
+
+    .btn-purple {
+      background: linear-gradient(135deg, var(--purple), var(--purple-lt));
+      color: #fff;
+      box-shadow: 0 4px 18px rgba(139,92,246,0.4);
+    }
+
+    .btn-purple:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(139,92,246,0.55);
+    }
+
+    .btn-cyan {
+      background: linear-gradient(135deg, #0891b2, var(--cyan));
+      color: #000;
+      box-shadow: 0 4px 18px rgba(34,211,238,0.35);
+    }
+
+    .btn-cyan:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(34,211,238,0.5);
+    }
+
+    .btn-amber {
+      background: linear-gradient(135deg, #d97706, var(--amber));
+      color: #000;
+      box-shadow: 0 4px 18px rgba(245,158,11,0.35);
+    }
+
+    .btn-amber:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(245,158,11,0.5);
+    }
+
+    .btn-ghost {
+      background: var(--surface-2);
+      border: 1.5px solid var(--border);
+      color: var(--text-2);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--border-hover);
+      color: var(--text-1);
+      transform: translateY(-1px);
+    }
+
+    /* ============================================
+       COMPONENT 1 — COLOR BUTTON
+    ============================================ */
+    .color-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    /* The circular color preview */
+    .color-orb-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .color-orb {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: #8b5cf6;
+      box-shadow: 0 0 40px var(--current-shadow, rgba(139,92,246,0.6));
+      transition: background 0.5s ease, box-shadow 0.5s ease, transform var(--trans-bounce);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      cursor: default;
+    }
+
+    .color-orb.pulse {
+      animation: orbPulse 0.5s ease;
+    }
+
+    @keyframes orbPulse {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+
+    /* Ripple rings */
+    .orb-ring {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 2px solid;
+      opacity: 0;
+    }
+
+    .orb-ring.animate {
+      animation: ringExpand 0.7s ease-out forwards;
+    }
+
+    @keyframes ringExpand {
+      0%   { transform: scale(1);   opacity: 0.6; }
+      100% { transform: scale(1.8); opacity: 0; }
+    }
+
+    /* Color info */
+    .color-info {
+      text-align: center;
+    }
+
+    .color-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 0.25rem;
+    }
+
+    .color-hex {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: var(--text-3);
+      background: var(--surface-2);
+      padding: 0.2rem 0.7rem;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+      display: inline-block;
+    }
+
+    /* Palette dots */
+    .palette-dots {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .palette-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      transition: transform var(--trans), opacity var(--trans);
+      opacity: 0.4;
+    }
+
+    .palette-dot.active {
+      transform: scale(1.5);
+      opacity: 1;
+    }
+
+    /* ============================================
+       COMPONENT 2 — GREETING SYSTEM
+    ============================================ */
+    .greeting-stage {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .greeting-display {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      text-align: center;
+      min-height: 110px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      transition: border-color var(--trans);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .greeting-display.show {
+      border-color: rgba(34,211,238,0.3);
+      animation: greetReveal 0.45s ease;
+    }
+
+    @keyframes greetReveal {
+      0%   { opacity: 0; transform: translateY(8px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .greeting-emoji {
+      font-size: 2.2rem;
+      line-height: 1;
+    }
+
+    .greeting-text {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-1);
+    }
+
+    .greeting-sub {
+      font-size: 0.82rem;
+      color: var(--text-2);
+    }
+
+    .greeting-placeholder {
+      color: var(--text-3);
+      font-size: 0.9rem;
+    }
+
+    /* Clock */
+    .live-clock {
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      color: var(--text-3);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-pill);
+      padding: 0.3rem 0.85rem;
+      text-align: center;
+    }
+
+    /* Time range badges */
+    .time-legend {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+
+    .time-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.76rem;
+      color: var(--text-3);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.35rem 0.65rem;
+    }
+
+    /* ============================================
+       COMPONENT 3 — FULL CALCULATOR
+    ============================================ */
+    .calc-stage {
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+
+    /* Operation tab bar */
+    .op-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.4rem;
+    }
+
+    .op-tab {
+      padding: 0.5rem 0.25rem;
+      background: var(--surface-2);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--mono);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-2);
+      cursor: pointer;
+      text-align: center;
+      transition: background var(--trans), border-color var(--trans),
+                  color var(--trans), box-shadow var(--trans), transform var(--trans-bounce);
+      line-height: 1;
+    }
+
+    .op-tab:hover {
+      border-color: var(--border-hover);
+      color: var(--amber);
+      transform: translateY(-1px);
+    }
+
+    .op-tab.active {
+      background: rgba(245,158,11,0.12);
+      border-color: rgba(245,158,11,0.45);
+      color: var(--amber);
+      box-shadow: 0 0 14px rgba(245,158,11,0.2);
+    }
+
+    /* Single-operand tab row */
+    .op-tabs-single {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.4rem;
+    }
+
+    .op-tab-single {
+      padding: 0.45rem 0.25rem;
+      background: var(--surface-2);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-3);
+      cursor: pointer;
+      text-align: center;
+      transition: background var(--trans), border-color var(--trans),
+                  color var(--trans), transform var(--trans-bounce);
+    }
+
+    .op-tab-single:hover {
+      border-color: var(--border-hover);
+      color: var(--purple-lt);
+      transform: translateY(-1px);
+    }
+
+    .op-tab-single.active {
+      background: rgba(139,92,246,0.12);
+      border-color: rgba(139,92,246,0.4);
+      color: var(--purple-lt);
+    }
+
+    /* Section divider label */
+    .calc-section-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 0.1rem;
+    }
+
+    /* Inputs row */
+    .calc-inputs {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .calc-inputs-dual {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: end;
+      gap: 0.75rem;
+    }
+
+    .operator-badge {
+      width: 44px;
+      height: 44px;
+      background: rgba(245,158,11,0.1);
+      border: 1.5px solid rgba(245,158,11,0.35);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--amber);
+      flex-shrink: 0;
+      transition: border-color var(--trans), background var(--trans);
+    }
+
+    /* Expression preview */
+    .calc-expression {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--text-3);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.35rem 0.9rem;
+      min-height: 1.8em;
+      transition: opacity var(--trans);
+    }
+
+    /* Result panel */
+    .calc-result-wrap {
+      background: var(--surface-2);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.1rem 1.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      transition: border-color var(--trans), box-shadow var(--trans);
+    }
+
+    .calc-result-wrap.valid {
+      border-color: rgba(245,158,11,0.35);
+      box-shadow: 0 0 20px rgba(245,158,11,0.1);
+    }
+
+    .calc-result-wrap.error {
+      border-color: rgba(239,68,68,0.35);
+      box-shadow: 0 0 20px rgba(239,68,68,0.08);
+    }
+
+    .calc-result-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .calc-result-value {
+      font-family: var(--mono);
+      font-size: 1.7rem;
+      font-weight: 500;
+      color: var(--amber);
+      transition: color var(--trans);
+      word-break: break-all;
+    }
+
+    .calc-result-value.error {
+      color: #ef4444;
+      font-size: 0.82rem;
+      font-family: var(--font);
+    }
+
+    .calc-result-value.animate {
+      animation: numPop 0.35s var(--trans-bounce);
+    }
+
+    @keyframes numPop {
+      0%   { transform: scale(0.85); opacity: 0.5; }
+      60%  { transform: scale(1.08); }
+      100% { transform: scale(1);    opacity: 1; }
+    }
+
+    .calc-btn-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.75rem;
+    }
+
+    /* Validation message */
+    .validation-msg {
+      font-size: 0.78rem;
+      color: #ef4444;
+      min-height: 1.1em;
+      padding-left: 0.25rem;
+      transition: opacity var(--trans);
+    }
+
+    /* ============================================
+       CONSOLE LOG PANEL (bonus)
+    ============================================ */
+    .console-panel {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem 4rem;
+    }
+
+    .console-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+
+    .console-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .console-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      animation: blink 1.5s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
+    .console-box {
+      background: #0a0c10;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--green);
+      max-height: 180px;
+      overflow-y: auto;
+      line-height: 1.9;
+    }
+
+    .console-box::-webkit-scrollbar { width: 4px; }
+    .console-box::-webkit-scrollbar-track { background: transparent; }
+    .console-box::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .log-line { display: flex; gap: 0.75rem; }
+    .log-time  { color: var(--text-3); flex-shrink: 0; }
+    .log-tag   { color: var(--cyan);   flex-shrink: 0; }
+    .log-msg   { color: var(--text-1); word-break: break-all; }
+    .log-val   { color: var(--amber); }
+
+    /* ============================================
+       FOOTER
+    ============================================ */
+    .page-footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-3);
+      font-size: 0.8rem;
+    }
+
+    /* ============================================
+       RESPONSIVE
+    ============================================ */
+    @media (max-width: 600px) {
+      .components-grid { grid-template-columns: 1fr; padding: 0 1rem 4rem; }
+      .page-header { padding: 3.5rem 1rem 2rem; }
+      .calc-inputs { grid-template-columns: 1fr auto 1fr; }
+      .time-legend { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =============================================
+       PAGE HEADER
+  ============================================== -->
+  <header class="page-header">
+    <div class="page-badge">⚡ Task 2 — Vanilla JS</div>
+    <h1>Interactive Micro-UI Suite</h1>
+    <p>Three elegant components built with pure HTML, CSS &amp; vanilla JavaScript — no frameworks.</p>
+  </header>
+
+
+  <!-- =============================================
+       COMPONENTS GRID
+  ============================================== -->
+  <main class="components-grid">
+
+    <!-- ==========================================
+         COMPONENT 1: SMART COLOR-CHANGING BUTTON
+    =========================================== -->
+    <section class="card card-purple" aria-labelledby="comp1-title">
+      <div class="card-label">
+        <div class="card-icon icon-purple">🎨</div>
+        <div class="card-meta">
+          <h2 id="comp1-title">Smart Color Button</h2>
+          <span>Component 1 · Rotating Palette</span>
+        </div>
+      </div>
+
+      <div class="color-stage">
+        <!-- Orb display -->
+        <div class="color-orb-wrap">
+          <div class="orb-ring" id="orb-ring"></div>
+          <div class="color-orb" id="color-orb">✦</div>
+        </div>
+
+        <!-- Color info -->
+        <div class="color-info">
+          <div class="color-name" id="color-name">Violet</div>
+          <div class="color-hex" id="color-hex">#8b5cf6</div>
+        </div>
+
+        <!-- Palette indicator dots -->
+        <div class="palette-dots" id="palette-dots" aria-label="Color palette indicator"></div>
+
+        <!-- Buttons -->
+        <div style="display:flex; gap:0.75rem; width:100%; justify-content:center;">
+          <button class="btn btn-purple" id="color-change-btn" style="flex:1">
+            ✦ Change Color
+          </button>
+          <button class="btn btn-ghost" id="color-random-btn" title="Random color" style="padding:0.78rem 1rem;">
+            🎲
+          </button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==========================================
+         COMPONENT 2: CONTEXT-AWARE GREETING
+    =========================================== -->
+    <section class="card card-cyan" aria-labelledby="comp2-title">
+      <div class="card-label">
+        <div class="card-icon icon-cyan">⏰</div>
+        <div class="card-meta">
+          <h2 id="comp2-title">Greeting System</h2>
+          <span>Component 2 · Time-Aware</span>
+        </div>
+      </div>
+
+      <div class="greeting-stage">
+        <!-- Live clock -->
+        <div class="live-clock" id="live-clock">⏱ Loading time…</div>
+
+        <!-- Name input -->
+        <div>
+          <label class="field-label" for="greet-name">Your Name (optional)</label>
+          <input
+            type="text"
+            id="greet-name"
+            class="field-input field-cyan"
+            placeholder="e.g. Saive"
+            autocomplete="given-name"
+            maxlength="30"
+          />
+        </div>
+
+        <!-- Greeting display -->
+        <div class="greeting-display" id="greeting-display" aria-live="polite">
+          <span class="greeting-placeholder">Click the button to see your greeting 👇</span>
+        </div>
+
+        <!-- Time legend -->
+        <div class="time-legend">
+          <div class="time-badge">🌅 5–11 Morning</div>
+          <div class="time-badge">☀️ 12–16 Afternoon</div>
+          <div class="time-badge">🌆 17–20 Evening</div>
+          <div class="time-badge">🌙 21–4 Night</div>
+        </div>
+
+        <!-- Button -->
+        <button class="btn btn-cyan" id="greet-btn" style="width:100%">
+          ✦ Greet Me
+        </button>
+      </div>
+    </section>
+
+
+    <!-- ==========================================
+         COMPONENT 3: SMART CALCULATOR (ALL OPS)
+    =========================================== -->
+    <section class="card card-amber" aria-labelledby="comp3-title">
+      <div class="card-label">
+        <div class="card-icon icon-amber">🧮</div>
+        <div class="card-meta">
+          <h2 id="comp3-title">Smart Calculator</h2>
+          <span>Component 3 · All Math Operations</span>
+        </div>
+      </div>
+
+      <div class="calc-stage">
+
+        <!-- Binary operation selector -->
+        <div>
+          <div class="calc-section-label">Binary Operations (A op B)</div>
+          <div class="op-tabs" role="group" aria-label="Select operation">
+            <button class="op-tab active" data-op="+"  id="op-add"  aria-pressed="true"  title="Addition">+</button>
+            <button class="op-tab"        data-op="-"  id="op-sub"  aria-pressed="false" title="Subtraction">−</button>
+            <button class="op-tab"        data-op="*"  id="op-mul"  aria-pressed="false" title="Multiplication">×</button>
+            <button class="op-tab"        data-op="/"  id="op-div"  aria-pressed="false" title="Division">÷</button>
+            <button class="op-tab"        data-op="%"  id="op-mod"  aria-pressed="false" title="Modulo">mod</button>
+            <button class="op-tab"        data-op="**" id="op-pow"  aria-pressed="false" title="Power (Aᴮ)">xʸ</button>
+            <button class="op-tab"        data-op="log" id="op-log" aria-pressed="false" title="Logₐ(B)">logₐ</button>
+            <button class="op-tab"        data-op="hyp" id="op-hyp" aria-pressed="false" title="Hypotenuse √(A²+B²)">hyp</button>
+          </div>
+        </div>
+
+        <!-- Single-operand operation selector -->
+        <div>
+          <div class="calc-section-label">Unary Operations (on A only)</div>
+          <div class="op-tabs-single" role="group" aria-label="Unary operation">
+            <button class="op-tab-single" data-unary="sqrt"  id="op-sqrt"  title="Square root of A">√A</button>
+            <button class="op-tab-single" data-unary="cbrt"  id="op-cbrt"  title="Cube root of A">∛A</button>
+            <button class="op-tab-single" data-unary="recip" id="op-recip" title="Reciprocal 1/A">1/A</button>
+            <button class="op-tab-single" data-unary="neg"   id="op-neg"   title="Negate A">±A</button>
+            <button class="op-tab-single" data-unary="abs"   id="op-abs"   title="Absolute value |A|">|A|</button>
+            <button class="op-tab-single" data-unary="sq"    id="op-sq"    title="Square A²">A²</button>
+            <button class="op-tab-single" data-unary="sin"   id="op-sin"   title="sin(A) in degrees">sin</button>
+            <button class="op-tab-single" data-unary="cos"   id="op-cos"   title="cos(A) in degrees">cos</button>
+          </div>
+        </div>
+
+        <!-- Number inputs -->
+        <div class="calc-inputs-dual" id="calc-dual-row">
+          <div>
+            <label class="field-label" for="calc-a">Number A</label>
+            <input
+              type="number"
+              id="calc-a"
+              class="field-input field-amber"
+              placeholder="0"
+              step="any"
+              aria-label="First number"
+            />
+          </div>
+          <div class="operator-badge" id="operator-badge" aria-hidden="true">+</div>
+          <div id="calc-b-wrap">
+            <label class="field-label" for="calc-b">Number B</label>
+            <input
+              type="number"
+              id="calc-b"
+              class="field-input field-amber"
+              placeholder="0"
+              step="any"
+              aria-label="Second number"
+            />
+          </div>
+        </div>
+
+        <!-- Live expression preview -->
+        <div class="calc-expression" id="calc-expression" aria-live="polite">—</div>
+
+        <!-- Validation message -->
+        <div class="validation-msg" id="calc-error" role="alert" aria-live="polite"></div>
+
+        <!-- Result panel -->
+        <div class="calc-result-wrap" id="calc-result-wrap" aria-live="polite">
+          <div style="flex:1; min-width:0;">
+            <div class="calc-result-label">Result</div>
+            <div class="calc-result-value" id="calc-result">—</div>
+          </div>
+          <div style="font-size:1.8rem; opacity:0.12; flex-shrink:0;" aria-hidden="true">∑</div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="calc-btn-row">
+          <button class="btn btn-amber" id="calc-compute-btn">= Calculate</button>
+          <button class="btn btn-ghost" id="calc-clear-btn" style="padding:0.78rem 1rem;" title="Clear">⟳</button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- =============================================
+       CONSOLE LOG PANEL
+  ============================================== -->
+  <section class="console-panel" aria-label="Debug console">
+    <div class="console-header">
+      <div class="console-title">
+        <span class="console-dot"></span>
+        JS Debug Console
+      </div>
+      <button class="btn btn-ghost" id="clear-console-btn" style="padding:0.35rem 0.85rem; font-size:0.78rem;">
+        Clear
+      </button>
+    </div>
+    <div class="console-box" id="console-box" role="log" aria-label="JavaScript console output">
+      <!-- Logs injected here by JS -->
+    </div>
+  </section>
+
+
+  <footer class="page-footer">
+    Built with pure HTML · CSS · Vanilla JS &nbsp;·&nbsp; Task 2 &nbsp;·&nbsp; Cognify
+  </footer>
+
+
+  <!-- =============================================
+       JAVASCRIPT
+  ============================================== -->
+  <script>
+    'use strict';
+
+    /* ================================================
+       UTILITY: Custom Console Logger
+    ================================================ */
+    const consoleBox = document.getElementById('console-box');
+
+    /**
+     * Appends a colored log line to the on-page debug console.
+     * @param {string} tag    - Component tag (e.g. '[ColorBtn]')
+     * @param {string} msg    - Description message
+     * @param {*}      [val]  - Optional value to highlight
+     */
+    const devLog = (tag, msg, val) => {
+      const now  = new Date();
+      const time = now.toLocaleTimeString('en-US', { hour12: false });
+
+      // Also log to browser console
+      val !== undefined
+        ? console.log(`${tag} ${msg}`, val)
+        : console.log(`${tag} ${msg}`);
+
+      // Build DOM line
+      const line = document.createElement('div');
+      line.className = 'log-line';
+      line.innerHTML =
+        `<span class="log-time">${time}</span>` +
+        `<span class="log-tag">${tag}</span>` +
+        `<span class="log-msg">${msg}` +
+        (val !== undefined ? ` <span class="log-val">${JSON.stringify(val)}</span>` : '') +
+        `</span>`;
+
+      consoleBox.appendChild(line);
+      consoleBox.scrollTop = consoleBox.scrollHeight;
+    };
+
+    // Clear console button
+    document.getElementById('clear-console-btn').addEventListener('click', () => {
+      consoleBox.innerHTML = '';
+      devLog('[Console]', 'Console cleared.');
+    });
+
+    devLog('[App]', 'JS Micro-UI Suite initialised.');
+
+
+    /* ================================================
+       COMPONENT 1 — SMART COLOR-CHANGING BUTTON
+    ================================================ */
+    (() => {
+      // --- Palette definition ---
+      const palette = [
+        { name: 'Violet',      hex: '#8b5cf6', shadow: 'rgba(139,92,246,0.6)' },
+        { name: 'Cyan',        hex: '#22d3ee', shadow: 'rgba(34,211,238,0.6)'  },
+        { name: 'Rose',        hex: '#f43f5e', shadow: 'rgba(244,63,94,0.6)'   },
+        { name: 'Emerald',     hex: '#10b981', shadow: 'rgba(16,185,129,0.6)'  },
+        { name: 'Amber',       hex: '#f59e0b', shadow: 'rgba(245,158,11,0.6)'  },
+        { name: 'Sky Blue',    hex: '#3b82f6', shadow: 'rgba(59,130,246,0.6)'  },
+        { name: 'Pink',        hex: '#ec4899', shadow: 'rgba(236,72,153,0.6)'  },
+      ];
+
+      let currentIndex = 0; // tracks current palette position
+
+      // --- DOM refs ---
+      const orb          = document.getElementById('color-orb');
+      const orbRing       = document.getElementById('orb-ring');
+      const colorName     = document.getElementById('color-name');
+      const colorHex      = document.getElementById('color-hex');
+      const dotsContainer = document.getElementById('palette-dots');
+      const changBtn      = document.getElementById('color-change-btn');
+      const randomBtn     = document.getElementById('color-random-btn');
+
+      // --- Build palette indicator dots ---
+      const buildDots = () => {
+        dotsContainer.innerHTML = '';
+        palette.forEach((color, i) => {
+          const dot = document.createElement('div');
+          dot.className = `palette-dot ${i === currentIndex ? 'active' : ''}`;
+          dot.style.background = color.hex;
+          dot.setAttribute('aria-label', color.name);
+          dot.setAttribute('role', 'img');
+          dotsContainer.appendChild(dot);
+        });
+      };
+
+      /**
+       * Applies a color from the palette to the orb and labels.
+       * @param {number} index - Palette index to apply
+       */
+      const applyColor = (index) => {
+        const color = palette[index];
+
+        // Update orb
+        orb.style.background    = color.hex;
+        orb.style.boxShadow     = `0 0 40px ${color.shadow}`;
+
+        // Update text info
+        colorName.textContent = color.name;
+        colorHex.textContent  = color.hex;
+
+        // Pulse animation
+        orb.classList.remove('pulse');
+        void orb.offsetWidth; // reflow to restart animation
+        orb.classList.add('pulse');
+
+        // Ring ripple
+        orbRing.style.borderColor = color.hex;
+        orbRing.classList.remove('animate');
+        void orbRing.offsetWidth;
+        orbRing.classList.add('animate');
+
+        // Update dots
+        buildDots();
+
+        devLog('[ColorBtn]', `Color changed →`, color.name + ' ' + color.hex);
+      };
+
+      // --- Rotate through palette on click ---
+      changBtn.addEventListener('click', () => {
+        currentIndex = (currentIndex + 1) % palette.length;
+        applyColor(currentIndex);
+      });
+
+      // --- Random color button ---
+      randomBtn.addEventListener('click', () => {
+        // Generate a random hex color
+        const randomHex = '#' + Math.floor(Math.random() * 0xFFFFFF)
+          .toString(16).padStart(6, '0');
+
+        // Temporarily add as custom entry
+        orb.style.background = randomHex;
+        orb.style.boxShadow  = `0 0 40px ${randomHex}88`;
+        colorName.textContent = 'Custom';
+        colorHex.textContent  = randomHex;
+
+        orb.classList.remove('pulse');
+        void orb.offsetWidth;
+        orb.classList.add('pulse');
+
+        orbRing.style.borderColor = randomHex;
+        orbRing.classList.remove('animate');
+        void orbRing.offsetWidth;
+        orbRing.classList.add('animate');
+
+        devLog('[ColorBtn]', 'Random color generated →', randomHex);
+      });
+
+      // --- Initialise ---
+      buildDots();
+      applyColor(0);
+      devLog('[ColorBtn]', 'Component initialised with', `${palette.length} colors in palette.`);
+    })();
+
+
+    /* ================================================
+       COMPONENT 2 — CONTEXT-AWARE GREETING SYSTEM
+    ================================================ */
+    (() => {
+      // --- Greeting definitions per time range ---
+      const greetings = [
+        {
+          range:   [5, 11],
+          emoji:   '🌅',
+          label:   'Good Morning',
+          messages: [
+            'Start your day with a smile!',
+            'Rise and shine — the world is yours!',
+            'Fresh morning, fresh possibilities!',
+          ],
+        },
+        {
+          range:   [12, 16],
+          emoji:   '☀️',
+          label:   'Good Afternoon',
+          messages: [
+            'Keep the momentum going!',
+            'Stay focused — you\'re doing great!',
+            'The day is still full of opportunity!',
+          ],
+        },
+        {
+          range:   [17, 20],
+          emoji:   '🌆',
+          label:   'Good Evening',
+          messages: [
+            'Time to wind down a little.',
+            'Hope the day treated you well!',
+            'Evening brings reflection and calm.',
+          ],
+        },
+        {
+          range:   [21, 28], // 21–23 + 0–4 via modulo trick
+          emoji:   '🌙',
+          label:   'Good Night',
+          messages: [
+            'Rest up — tomorrow is a new day!',
+            'The stars are out. Time to recharge.',
+            'Sweet dreams and peaceful rest!',
+          ],
+        },
+      ];
+
+      const clockEl         = document.getElementById('live-clock');
+      const nameInput       = document.getElementById('greet-name');
+      const greetDisplay    = document.getElementById('greeting-display');
+      const greetBtn        = document.getElementById('greet-btn');
+
+      /**
+       * Returns the greeting object for the given hour (0–23).
+       * @param {number} hour
+       * @returns {object}
+       */
+      const getGreeting = (hour) => {
+        const h = hour < 5 ? hour + 24 : hour; // shift 0–4 to 24–28 for night range
+        return greetings.find(g => h >= g.range[0] && h <= g.range[1])
+          || greetings[3]; // fallback: night
+      };
+
+      /**
+       * Picks a random message from the array.
+       * @param {string[]} arr
+       * @returns {string}
+       */
+      const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+      // --- Live clock update ---
+      const updateClock = () => {
+        const now = new Date();
+        clockEl.textContent = '⏱ ' + now.toLocaleTimeString('en-US', {
+          hour: '2-digit', minute: '2-digit', second: '2-digit',
+        });
+      };
+
+      updateClock();
+      setInterval(updateClock, 1000);
+
+      // --- Render greeting ---
+      const showGreeting = () => {
+        const now     = new Date();
+        const hour    = now.getHours();
+        const greet   = getGreeting(hour);
+        const name    = nameInput.value.trim();
+        const message = pickRandom(greet.messages);
+
+        const nameText = name ? `, ${name}` : '!';
+        const fullLabel = `${greet.label}${nameText}`;
+
+        greetDisplay.innerHTML = `
+          <div class="greeting-emoji">${greet.emoji}</div>
+          <div class="greeting-text">${fullLabel}</div>
+          <div class="greeting-sub">${message}</div>
+        `;
+
+        greetDisplay.classList.remove('show');
+        void greetDisplay.offsetWidth;
+        greetDisplay.classList.add('show');
+
+        devLog('[Greeting]', `Displayed greeting →`, `${greet.label} @ hour=${hour}`);
+      };
+
+      greetBtn.addEventListener('click', showGreeting);
+
+      // --- Also auto-greet on page load ---
+      window.addEventListener('load', () => {
+        devLog('[Greeting]', 'Page load — auto-greet triggered.');
+        showGreeting();
+      });
+
+      devLog('[Greeting]', 'Component initialised.');
+    })();
+
+
+    /* ================================================
+       COMPONENT 3 — FULL SMART CALCULATOR
+    ================================================ */
+    (() => {
+      // --- DOM refs ---
+      const inputA       = document.getElementById('calc-a');
+      const inputB       = document.getElementById('calc-b');
+      const bWrap        = document.getElementById('calc-b-wrap');
+      const opBadge      = document.getElementById('operator-badge');
+      const exprEl       = document.getElementById('calc-expression');
+      const resultWrap   = document.getElementById('calc-result-wrap');
+      const resultEl     = document.getElementById('calc-result');
+      const errorEl      = document.getElementById('calc-error');
+      const computeBtn   = document.getElementById('calc-compute-btn');
+      const clearBtn     = document.getElementById('calc-clear-btn');
+      const opTabs       = document.querySelectorAll('.op-tab');
+      const unaryBtns    = document.querySelectorAll('.op-tab-single');
+
+      // --- State ---
+      let currentOp    = '+';   // active binary operator key
+      let currentUnary = null;  // active unary operator key (null = none)
+
+      /* ── Symbol maps ── */
+      const opSymbol = {
+        '+':   '+',
+        '-':   '−',
+        '*':   '×',
+        '/':   '÷',
+        '%':   'mod',
+        '**':  '^',
+        'log': 'log',
+        'hyp': 'hyp',
+      };
+
+      const unarySymbol = {
+        sqrt:  '√',
+        cbrt:  '∛',
+        recip: '1/',
+        neg:   '−',
+        abs:   '|  |',
+        sq:    '²',
+        sin:   'sin°',
+        cos:   'cos°',
+      };
+
+      /** Format a number for display — avoids floating-point noise */
+      const fmt = (n) => {
+        if (!isFinite(n)) return String(n); // Infinity / -Infinity / NaN
+        const s = parseFloat(n.toPrecision(12));
+        return s.toLocaleString('en-US', { maximumFractionDigits: 10 });
+      };
+
+      /** Validate a raw string input */
+      const validate = (raw, label) => {
+        if (raw.trim() === '') return { ok: false, msg: `${label} is required.` };
+        const n = parseFloat(raw);
+        if (isNaN(n))          return { ok: false, msg: `${label} is not a valid number.` };
+        return { ok: true, val: n };
+      };
+
+      /** Flash the result element with pop animation */
+      const flashResult = (text, state /* 'valid'|'error'|'reset' */) => {
+        resultEl.textContent = text;
+        resultWrap.className = `calc-result-wrap${state !== 'reset' ? ' ' + state : ''}`;
+        resultEl.className   = `calc-result-value${state === 'error' ? ' error' : ' animate'}`;
+        resultEl.addEventListener('animationend', () => {
+          resultEl.classList.remove('animate');
+        }, { once: true });
+      };
+
+      /** Update the live expression preview */
+      const updateExpr = () => {
+        const a = inputA.value.trim() || 'A';
+        const b = inputB.value.trim() || 'B';
+        if (currentUnary) {
+          const sym = unarySymbol[currentUnary];
+          if (currentUnary === 'sq')    exprEl.textContent = `${a}²`;
+          else if (currentUnary === 'recip') exprEl.textContent = `1 / ${a}`;
+          else if (currentUnary === 'abs')   exprEl.textContent = `|${a}|`;
+          else exprEl.textContent = `${sym}(${a})`;
+        } else {
+          const sym = opSymbol[currentOp] || currentOp;
+          if (currentOp === 'log')      exprEl.textContent = `log${a}(${b})`;
+          else if (currentOp === 'hyp') exprEl.textContent = `√(${a}² + ${b}²)`;
+          else                           exprEl.textContent = `${a} ${sym} ${b}`;
+        }
+      };
+
+      /* ── Toggle B input visibility (hidden for unary ops) ── */
+      const setBInputVisible = (visible) => {
+        bWrap.style.display    = visible ? '' : 'none';
+        opBadge.style.display  = visible ? '' : 'none';
+      };
+
+      /* ── Binary tab click ── */
+      opTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          // Deactivate all binary tabs; clear unary
+          opTabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-pressed','false'); });
+          unaryBtns.forEach(u => u.classList.remove('active'));
+          currentUnary = null;
+
+          tab.classList.add('active');
+          tab.setAttribute('aria-pressed','true');
+          currentOp = tab.dataset.op;
+
+          // Show badge with current symbol
+          opBadge.textContent = opSymbol[currentOp] || currentOp;
+          setBInputVisible(true);
+          updateExpr();
+          calculate();
+          devLog('[Calculator]', 'Operation selected →', currentOp);
+        });
+      });
+
+      /* ── Unary tab click ── */
+      unaryBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const key = btn.dataset.unary;
+          if (currentUnary === key) {
+            // Toggle off — go back to binary
+            btn.classList.remove('active');
+            currentUnary = null;
+            setBInputVisible(true);
+            updateExpr();
+            calculate();
+            devLog('[Calculator]', 'Unary deselected.');
+            return;
+          }
+          // Activate this unary
+          unaryBtns.forEach(u => u.classList.remove('active'));
+          opTabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-pressed','false'); });
+          btn.classList.add('active');
+          currentUnary = key;
+          setBInputVisible(false);        // hide B input for unary
+          opBadge.textContent = unarySymbol[key];
+          updateExpr();
+          calculate();
+          devLog('[Calculator]', 'Unary operation selected →', key);
+        });
+      });
+
+      /**
+       * Core calculation function.
+       * Reads inputs, runs the selected binary or unary operation,
+       * validates edge cases, and renders the result.
+       */
+      const calculate = () => {
+        errorEl.textContent = '';
+        updateExpr();
+
+        /* ── UNARY path ── */
+        if (currentUnary) {
+          const vA = validate(inputA.value, 'Number A');
+          if (!vA.ok) {
+            if (inputA.value.trim() === '') {
+              flashResult('—', 'reset'); return; // silent when empty
+            }
+            errorEl.textContent = '⚠ ' + vA.msg;
+            flashResult('Error', 'error');
+            devLog('[Calculator]', 'Unary validation failed —', vA.msg);
+            return;
+          }
+          const a = vA.val;
+          let result;
+          switch (currentUnary) {
+            case 'sqrt':
+              if (a < 0) { errorEl.textContent = '⚠ Cannot take √ of a negative number.'; flashResult('Error','error'); return; }
+              result = Math.sqrt(a); break;
+            case 'cbrt':  result = Math.cbrt(a); break;
+            case 'recip':
+              if (a === 0) { errorEl.textContent = '⚠ Cannot divide by zero (1/0).'; flashResult('Error','error'); return; }
+              result = 1 / a; break;
+            case 'neg':   result = -a; break;
+            case 'abs':   result = Math.abs(a); break;
+            case 'sq':    result = a * a; break;
+            case 'sin':   result = Math.sin(a * Math.PI / 180); break;
+            case 'cos':   result = Math.cos(a * Math.PI / 180); break;
+            default:      result = a;
+          }
+          flashResult(fmt(result), 'valid');
+          devLog('[Calculator]', `${currentUnary}(${a}) =`, result);
+          return;
+        }
+
+        /* ── BINARY path ── */
+        const vA = validate(inputA.value, 'Number A');
+        const vB = validate(inputB.value, 'Number B');
+
+        // Silently reset if both empty
+        if (inputA.value.trim() === '' && inputB.value.trim() === '') {
+          flashResult('—', 'reset'); return;
+        }
+
+        if (!vA.ok) {
+          errorEl.textContent = '⚠ ' + vA.msg;
+          flashResult('Error', 'error');
+          devLog('[Calculator]', 'Validation failed —', vA.msg);
+          return;
+        }
+        if (!vB.ok) {
+          errorEl.textContent = '⚠ ' + vB.msg;
+          flashResult('Error', 'error');
+          devLog('[Calculator]', 'Validation failed —', vB.msg);
+          return;
+        }
+
+        const a = vA.val, b = vB.val;
+        let result;
+
+        switch (currentOp) {
+          case '+':
+            result = a + b; break;
+          case '-':
+            result = a - b; break;
+          case '*':
+            result = a * b; break;
+          case '/':
+            if (b === 0) { errorEl.textContent = '⚠ Division by zero is undefined.'; flashResult('Error','error'); return; }
+            result = a / b; break;
+          case '%':
+            if (b === 0) { errorEl.textContent = '⚠ Modulo by zero is undefined.'; flashResult('Error','error'); return; }
+            result = a % b; break;
+          case '**':
+            result = Math.pow(a, b); break;
+          case 'log':
+            if (a <= 0 || a === 1) { errorEl.textContent = '⚠ Base must be > 0 and ≠ 1.'; flashResult('Error','error'); return; }
+            if (b <= 0) { errorEl.textContent = '⚠ Argument must be > 0.'; flashResult('Error','error'); return; }
+            result = Math.log(b) / Math.log(a); break;
+          case 'hyp':
+            result = Math.sqrt(a * a + b * b); break;
+          default:
+            flashResult('—', 'reset'); return;
+        }
+
+        flashResult(fmt(result), 'valid');
+        devLog('[Calculator]', `${a} ${opSymbol[currentOp]} ${b} =`, result);
+      };
+
+      // --- Real-time: recalculate whenever an input changes ---
+      inputA.addEventListener('input', () => { updateExpr(); calculate(); });
+      inputB.addEventListener('input', () => { updateExpr(); calculate(); });
+
+      // --- Manual Calculate button ---
+      computeBtn.addEventListener('click', () => {
+        devLog('[Calculator]', 'Calculate button clicked.');
+        calculate();
+      });
+
+      // --- Clear button ---
+      clearBtn.addEventListener('click', () => {
+        inputA.value = '';
+        inputB.value = '';
+        resultEl.textContent = '—';
+        resultEl.className   = 'calc-result-value';
+        resultWrap.className = 'calc-result-wrap';
+        errorEl.textContent  = '';
+        exprEl.textContent   = '—';
+        inputA.focus();
+        devLog('[Calculator]', 'Inputs cleared.');
+      });
+
+      // --- Init ---
+      opBadge.textContent = opSymbol[currentOp];
+      setBInputVisible(true);
+      devLog('[Calculator]', 'Full calculator initialised. Operations: binary ×8 + unary ×8.');
+    })();
+
+  </script>
+
+</body>
+</html>
