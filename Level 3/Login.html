@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Cognifyz Internship</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --secondary: #0ea5e9;
+            --dark: #0f172a;
+            --darker: #020617;
+            --gradient: linear-gradient(135deg, #4f46e5 0%, #0ea5e9 100%);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body {
+            background-color: var(--darker);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: radial-gradient(circle at 50% 0%, rgba(79, 70, 229, 0.15) 0%, transparent 50%);
+        }
+        .auth-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 50px 40px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        .auth-logo { color: var(--primary); font-size: 2.5rem; margin-bottom: 20px; }
+        h2 { font-size: 1.8rem; margin-bottom: 10px; }
+        p { color: #94a3b8; margin-bottom: 30px; font-size: 0.95rem; }
+        .input-group { position: relative; margin-bottom: 20px; }
+        .input-group i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #64748b; }
+        input {
+            width: 100%; padding: 14px 14px 14px 45px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px; color: white; font-size: 1rem; outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: var(--primary); background: rgba(255,255,255,0.1); }
+        .btn-submit {
+            width: 100%; padding: 14px; background: var(--gradient); border: none; border-radius: 12px;
+            color: white; font-weight: 600; font-size: 1rem; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3); margin-top: 10px;
+        }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(79, 70, 229, 0.4); }
+        .footer-link { margin-top: 25px; color: #94a3b8; font-size: 0.9rem; }
+        .footer-link a { color: var(--secondary); text-decoration: none; font-weight: 600; transition: 0.3s; }
+        .footer-link a:hover { color: white; }
+        .back-btn { position: absolute; top: 30px; left: 30px; color: #94a3b8; text-decoration: none; display: flex; align-items: center; gap: 8px; font-weight: 500; transition: 0.3s; }
+        .back-btn:hover { color: white; }
+    </style>
+</head>
+<body>
+    <a href="Task 2.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
+    
+    <div class="auth-card">
+        <i class="fa-solid fa-fingerprint auth-logo"></i>
+        <h2>Welcome Back</h2>
+        <p>Enter your credentials to access the portal.</p>
+        
+        <form onsubmit="event.preventDefault(); window.location.href='Task 2.html';">
+            <div class="input-group">
+                <i class="fa-solid fa-envelope"></i>
+                <input type="email" placeholder="Email Address" required>
+            </div>
+            <div class="input-group">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" placeholder="Password" required>
+            </div>
+            <button type="submit" class="btn-submit">Sign In</button>
+        </form>
+        
+        <div class="footer-link">
+            Don't have an account? <a href="Application.html">Apply Now</a>
+        </div>
+    </div>
+</body>
+</html>

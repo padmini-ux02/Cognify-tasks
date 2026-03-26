@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUMINA | Zero-JS Image Engine</title>
+
+    <!-- Google Fonts: Syncopate (for techy headings) and Outfit (for body text) -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* ==========================================
+           1. CORE TOKENS & HACKATHON THEME
+        ========================================== */
+        :root {
+            --bg-dark: #050507;
+            --bg-glass: rgba(15, 15, 20, 0.6);
+            --text-main: #ffffff;
+            --text-muted: #8b94a0;
+            --neon-blue: #00f3ff;
+            --neon-purple: #bc13fe;
+            --neon-pink: #ff007f;
+            --gradient-glow: linear-gradient(90deg, var(--neon-blue), var(--neon-purple), var(--neon-pink));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(188, 19, 254, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(0, 243, 255, 0.08) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--neon-purple);
+            border-radius: 4px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1300px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* Typography */
+        h1, h2, h3 {
+            font-family: 'Syncopate', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .gradient-text {
+            background: var(--gradient-glow);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: shine 4s linear infinite;
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        /* ==========================================
+           2. CINEMATIC HERO SECTION
+        ========================================== */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Parallax Background using pseudo element */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=2000&q=80') center/cover no-repeat fixed;
+            opacity: 0.15;
+            z-index: -1;
+            filter: contrast(120%) saturate(150%);
+        }
+
+        .hero-content h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 0 0 40px rgba(188, 19, 254, 0.5);
+        }
+
+        .hero-content p {
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        /* Bouncing Scroll Indicator */
+        .scroll-down {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            color: var(--neon-blue);
+            font-size: 2rem;
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); }
+            40% { transform: translateY(-20px) translateX(-50%); }
+            60% { transform: translateY(-10px) translateX(-50%); }
+        }
+
+        /* ==========================================
+           3. THE ENGINE: CATEGORY FILTERING (0 JS)
+        ========================================== */
+        .gallery-section {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        /* Hide Inputs */
+        input[type="radio"] {
+            display: none;
+        }
+
+        /* Filter Controls */
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+        }
+
+        .filter-label {
+            padding: 12px 30px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Syncopate', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-muted);
+            backdrop-filter: blur(10px);
+        }
+
+        .filter-label:hover {
+            color: #fff;
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 20px rgba(188, 19, 254, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Sibling Hack: Styling active labels */
+        #filter-all:checked ~ .filters label[for="filter-all"],
+        #filter-cyber:checked ~ .filters label[for="filter-cyber"],
+        #filter-space:checked ~ .filters label[for="filter-space"],
+        #filter-abstract:checked ~ .filters label[for="filter-abstract"] {
+            background: var(--gradient-glow);
+            color: #000;
+            border-color: transparent;
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.5);
+        }
+
+        /* The Grid */
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            /* Flex layout allows smooth collapsing of items */
+        }
+
+        .grid-item {
+            flex: 1 1 calc(33.333% - 20px);
+            min-width: 300px;
+            height: 350px;
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            /* Initial scale for filtering animation */
+            transform: scale(1);
+            opacity: 1;
+            /* A glowing border effect */
+            background: #000;
+        }
+
+        .grid-item::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: var(--gradient-glow);
+            z-index: -1;
+            filter: blur(8px);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .grid-item:hover::before {
+            opacity: 1;
+        }
+
+        .grid-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease, filter 0.5s ease;
+            filter: grayscale(80%) contrast(120%);
+        }
+
+        .grid-item:hover img {
+            transform: scale(1.15) rotate(2deg);
+            filter: grayscale(0%) contrast(100%);
+        }
+
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, transparent 60%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 25px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease;
+            pointer-events: none; /* Let clicks pass to the <a> wrapper */
+        }
+
+        .grid-item:hover .overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .overlay h3 {
+            font-size: 1.2rem;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .overlay span {
+            font-size: 0.9rem;
+            color: var(--neon-blue);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* === PURE CSS FILTER LOGIC === */
+        /* If Cyber is checked, hide everything that is NOT .cat-cyber */
+        #filter-cyber:checked ~ .grid .grid-item:not(.cat-cyber),
+        #filter-space:checked ~ .grid .grid-item:not(.cat-space),
+        #filter-abstract:checked ~ .grid .grid-item:not(.cat-abstract) {
+            transform: scale(0);
+            width: 0;
+            min-width: 0;
+            height: 0;
+            margin: 0;
+            padding: 0;
+            opacity: 0;
+            pointer-events: none;
+            flex: 0 0 0%;
+            border: none;
+        }
+
+
+        /* ==========================================
+           4. HACKATHON-GRADE KINETIC LIGHTBOX
+        ========================================== */
+        .lightbox-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 5, 7, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            perspective: 1500px;
+        }
+
+        .lightbox-modal:target {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .lightbox-backdrop {
+            position: absolute;
+            inset: 0;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>'), auto;
+            z-index: 1;
+        }
+
+        .lightbox-asset {
+            position: relative;
+            z-index: 2;
+            width: 90%;
+            max-width: 1200px;
+            background: rgba(10, 10, 15, 0.95);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.2), 0 0 100px rgba(188, 19, 254, 0.1);
+            transform: rotateX(20deg) scale(0.8) translateY(100px);
+            opacity: 0;
+            transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.8s ease;
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+        }
+
+        @media (max-width: 900px) {
+            .lightbox-asset { flex-direction: column; overflow-y: auto; max-height: 90vh; }
+        }
+
+        /* 3D Flip animation when targeted */
+        .lightbox-modal:target .lightbox-asset {
+            transform: rotateX(0deg) scale(1) translateY(0);
+            opacity: 1;
+            transition-delay: 0.1s;
+        }
+
+        .lightbox-asset img {
+            display: block;
+            width: 60%;
+            object-fit: cover;
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+
+        @media (max-width: 900px) {
+            .lightbox-asset img { width: 100%; height: 300px; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        }
+
+        .lightbox-info {
+            width: 40%;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        @media (max-width: 900px) {
+            .lightbox-info { width: 100%; padding: 25px; }
+        }
+
+        .lightbox-info h3 {
+            font-size: 2rem;
+            color: var(--neon-blue);
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+        }
+
+        .lightbox-info .badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(188, 19, 254, 0.1);
+            border: 1px solid var(--neon-purple);
+            color: var(--neon-purple);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 25px;
+            width: max-content;
+            font-weight: bold;
+        }
+
+        .lightbox-info p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .close-btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: var(--gradient-glow);
+            color: #000;
+            text-decoration: none;
+            font-weight: bold;
+            font-family: 'Syncopate', sans-serif;
+            text-align: center;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            width: max-content;
+        }
+
+        .close-btn:hover {
+            box-shadow: 0 0 20px rgba(188, 19, 254, 0.5);
+            transform: translateY(-2px);
+        }
+
+
+        /* ==========================================
+           5. 3D CYBER-SLIDESHOW ENGINE
+        ========================================== */
+        .slideshow-section {
+            padding: 100px 0 150px;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Scanning lines background */
+        .slideshow-section::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 243, 255, 0.03) 2px, rgba(0, 243, 255, 0.03) 4px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .tv-frame {
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            aspect-ratio: 21 / 9;
+            background: #050507;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            box-shadow: 
+                0 0 40px rgba(0,0,0,1),
+                inset 0 0 40px rgba(0, 243, 255, 0.1);
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .tv-frame::before {
+            content: "SYSTEM PROTOCOL ACTIVE";
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            font-family: 'Syncopate', monospace;
+            font-size: 0.8rem;
+            color: var(--neon-blue);
+            z-index: 10;
+            letter-spacing: 2px;
+            background: rgba(0,0,0,0.5);
+            padding: 5px 15px;
+            border-radius: 20px;
+            border: 1px solid var(--neon-blue);
+        }
+
+        .slide-layer {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            /* 3 Slides, 6s hold each, 18s total loop */
+            animation: kineticSlides 18s cubic-bezier(0.8, 0, 0.2, 1) infinite;
+        }
+
+        .slide-layer img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: saturate(120%);
+        }
+
+        /* Complex Glitch & Slide Animation */
+        @keyframes kineticSlides {
+            0% { opacity: 0; transform: translateX(100%) scale(1.2); clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%); z-index: 1;}
+            5% { opacity: 1; transform: translateX(0) scale(1); clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%); z-index: 2;}
+            30% { opacity: 1; transform: translateX(0) scale(1.05); clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%); z-index: 2;}
+            33% { opacity: 1; transform: translateX(-5%); clip-path: polygon(0 0, 100% 0, 100% 0%, 0% 0%); z-index: 1;} /* Glitch wipe up */
+            100% { opacity: 0; z-index: 0; }
+        }
+
+        /* Delays for 3 slides */
+        .slide-layer:nth-child(1) { animation-delay: 0s; }
+        .slide-layer:nth-child(2) { animation-delay: 6s; }
+        .slide-layer:nth-child(3) { animation-delay: 12s; }
+
+        /* The Info Panel riding over the slides */
+        .info-panel {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(15, 15, 20, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 20px 30px;
+            border-radius: 10px;
+            opacity: 0;
+            animation: panelFade 18s infinite;
+            z-index: 3;
+            text-align: right;
+        }
+
+        .info-panel h3 {
+            color: var(--neon-pink);
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .info-panel p {
+            color: var(--text-main);
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .slide-layer:nth-child(1) .info-panel { animation-delay: 0s; }
+        .slide-layer:nth-child(2) .info-panel { animation-delay: 6s; }
+        .slide-layer:nth-child(3) .info-panel { animation-delay: 12s; }
+
+        @keyframes panelFade {
+            0%, 4% { opacity: 0; transform: translateY(20px); }
+            8%, 28% { opacity: 1; transform: translateY(0); }
+            32%, 100% { opacity: 0; transform: translateY(-20px); }
+        }
+
+        /* Pause Hover Hack */
+        .tv-frame:hover .slide-layer,
+        .tv-frame:hover .info-panel {
+            animation-play-state: paused;
+        }
+
+        /* 3D Scanline overlay */
+        .tv-frame::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 20px 2px var(--neon-blue);
+            animation: scanline 8s linear infinite;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        @keyframes scanline {
+            0% { top: -10%; }
+            100% { top: 110%; }
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px 0;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            background: var(--bg-dark);
+            font-family: 'Syncopate', sans-serif;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Back to Home Global Node -->
+    <a href="../Level 2/Task 1.html" class="home-return-btn" style="position: fixed; top: 30px; left: 30px; background: rgba(0, 243, 255, 0.05); border: 1px solid var(--neon-blue); color: var(--neon-blue); text-decoration: none; padding: 12px 24px; border-radius: 30px; z-index: 10000; font-family: 'Syncopate', sans-serif; font-size: 0.8rem; letter-spacing: 2px; backdrop-filter: blur(15px); transition: all 0.3s ease; box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);" onmouseover="this.style.background='var(--neon-blue)'; this.style.color='#000'; this.style.boxShadow='0 0 30px rgba(0, 243, 255, 0.4)';" onmouseout="this.style.background='rgba(0, 243, 255, 0.05)'; this.style.color='var(--neon-blue)'; this.style.boxShadow='0 0 15px rgba(0, 243, 255, 0.1)';">
+        <i class="fa-solid fa-arrow-left me-2"></i> HOME HUB
+    </a>
+
+    <!-- HERO SECTION -->
+    <header class="hero">
+        <div class="container hero-content">
+            <h1 class="gradient-text">Lumina Engine</h1>
+            <p>Pushing the structural limits of the DOM. A completely frictionless, zero-JS interactive rendering engine built for the next generation of visual storytelling.</p>
+        </div>
+        <a href="#gallery" class="scroll-down"><i class="fa-solid fa-chevron-down"></i></a>
+    </header>
+
+    <!-- CORE FEATURE 1: PURE CSS FILTERING GALLERY -->
+    <section class="gallery-section container" id="gallery">
+        <div class="section-header">
+            <h2>Data Grid <span style="color: var(--neon-blue);">//</span> Filter</h2>
+            <p style="color: var(--text-muted);">Real-time DOM manipulation utilizing CSS sibling logic circuits.</p>
+        </div>
+
+        <!-- The Radio Button Logic Engine -->
+        <input type="radio" name="gallery-filter" id="filter-all" checked>
+        <input type="radio" name="gallery-filter" id="filter-cyber">
+        <input type="radio" name="gallery-filter" id="filter-space">
+        <input type="radio" name="gallery-filter" id="filter-abstract">
+
+        <!-- Visual Controller UI -->
+        <div class="filters">
+            <label for="filter-all" class="filter-label">ALL DATA</label>
+            <label for="filter-cyber" class="filter-label">CYBERPUNK</label>
+            <label for="filter-space" class="filter-label">AEROSPACE</label>
+            <label for="filter-abstract" class="filter-label">ABSTRACT</label>
+        </div>
+
+        <!-- The Gallery Graph -->
+        <div class="grid">
+            
+            <!-- Cyber Item -->
+            <a href="#lb-1" class="grid-item cat-cyber">
+                <img src="https://images.unsplash.com/photo-1542281286-9e0a16bb7366?w=800&q=80" alt="Cyber">
+                <div class="overlay">
+                    <h3>Neon Cortex</h3>
+                    <span>Class // Cyberpunk</span>
+                </div>
+            </a>
+
+            <!-- Space Item -->
+            <a href="#lb-2" class="grid-item cat-space">
+                <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=800&q=80" alt="Space">
+                <div class="overlay">
+                    <h3>Orbital Vector</h3>
+                    <span>Class // Aerospace</span>
+                </div>
+            </a>
+
+            <!-- Abstract Item -->
+            <a href="#lb-3" class="grid-item cat-abstract">
+                <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80" alt="Abstract">
+                <div class="overlay">
+                    <h3>Liquid Geometry</h3>
+                    <span>Class // Abstract</span>
+                </div>
+            </a>
+
+            <!-- Cyber Item -->
+            <a href="#lb-4" class="grid-item cat-cyber">
+                <img src="https://images.unsplash.com/photo-1515630278258-407f66498911?w=800&q=80" alt="Cyber 2">
+                <div class="overlay">
+                    <h3>Rogue AI</h3>
+                    <span>Class // Cyberpunk</span>
+                </div>
+            </a>
+
+            <!-- Abstract Item -->
+            <a href="#lb-5" class="grid-item cat-abstract">
+                <img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=800&q=80" alt="Abstract 2">
+                <div class="overlay">
+                    <h3>Neural Map</h3>
+                    <span>Class // Abstract</span>
+                </div>
+            </a>
+
+            <!-- Space Item -->
+            <a href="#lb-6" class="grid-item cat-space">
+                <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=800&q=80" alt="Space 2">
+                <div class="overlay">
+                    <h3>Exoplanet Zeta</h3>
+                    <span>Class // Aerospace</span>
+                </div>
+            </a>
+
+        </div>
+    </section>
+
+    <!-- CORE FEATURE 2: CYBER-CINEMATIC SLIDESHOW -->
+    <section class="slideshow-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Kinetic Cinematic <span style="color: var(--neon-pink);">//</span> Engine</h2>
+                <p style="color: var(--text-muted);">Self-executing @keyframes with 3D clipping masks and scanline technology. Hover to interject.</p>
+            </div>
+
+            <!-- Slideshow Frame -->
+            <div class="tv-frame">
+                
+                <div class="slide-layer">
+                    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1600&q=80" alt="Slide 1">
+                    <div class="info-panel">
+                        <h3>SERVER RACK // ALPHA</h3>
+                        <p>EXECUTION TIME: 0:00 - 0:06</p>
+                    </div>
+                </div>
+
+                <div class="slide-layer">
+                    <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1600&q=80" alt="Slide 2">
+                    <div class="info-panel">
+                        <h3>WORKSTATION // BETA</h3>
+                        <p>EXECUTION TIME: 0:06 - 0:12</p>
+                    </div>
+                </div>
+
+                <div class="slide-layer">
+                    <img src="https://images.unsplash.com/photo-1605379399642-870262d3d051?w=1600&q=80" alt="Slide 3">
+                    <div class="info-panel">
+                        <h3>DATA STREAM // GAMMA</h3>
+                        <p>EXECUTION TIME: 0:12 - 0:18</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <span class="gradient-text">LUMINA ENGINE</span> // BUILT FOR HACKATHONS // 100% PURE CSS
+        </div>
+    </footer>
+
+    <!-- 
+       ==========================================
+       LIGHTBOX PRO (3D Modals Triggered via :target)
+       ========================================== 
+    -->
+
+    <div class="lightbox-modal" id="lb-1">
+        <a href="#_" class="lightbox-backdrop"></a>
+        <div class="lightbox-asset">
+            <img src="https://images.unsplash.com/photo-1542281286-9e0a16bb7366?w=2000&q=80" alt="HD">
+            <div class="lightbox-info">
+                <h3>Neon Cortex</h3>
+                <span class="badge">Cyberpunk Module</span>
+                <p>An intricate exploration into the neon-drenched metropolis of the future. This module demonstrates advanced lighting synthesis, cybernetic infrastructure, and the underlying data flow governing smart cities in the year 2084.</p>
+                <a href="#_" class="close-btn">Close Terminal</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="lightbox-modal" id="lb-2">
+        <a href="#_" class="lightbox-backdrop"></a>
+        <div class="lightbox-asset">
+            <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=2000&q=80" alt="HD">
+            <div class="lightbox-info">
+                <h3>Orbital Vector</h3>
+                <span class="badge">Aerospace Logic</span>
+                <p>High-altitude planetary mapping systems displaying optimal flight vectors through dense celestial debris fields. Built to calculate atmospheric entry trajectories in real time.</p>
+                <a href="#_" class="close-btn">Close Terminal</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="lightbox-modal" id="lb-3">
+        <a href="#_" class="lightbox-backdrop"></a>
+        <div class="lightbox-asset">
+            <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=2000&q=80" alt="HD">
+            <div class="lightbox-info">
+                <h3>Liquid Geometry</h3>
+                <span class="badge">Abstract Form</span>
+                <p>A procedural generative art rendering that maps sonic waves into tactile 3D geometries. By altering code syntax, the structure melts and rearranges itself into infinite, beautiful patterns.</p>
+                <a href="#_" class="close-btn">Close Terminal</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="lightbox-modal" id="lb-4">
+        <a href="#_" class="lightbox-backdrop"></a>
+        <div class="lightbox-asset">
+            <img src="https://images.unsplash.com/photo-1515630278258-407f66498911?w=2000&q=80" alt="HD">
+            <div class="lightbox-info">
+                <h3>Rogue AI</h3>
+                <span class="badge">Cyberpunk Module</span>
+                <p>Deep within the server network, rogue digital entities evolve their own code. This visualization represents autonomous, self-learning scripts that have escaped sandbox environments.</p>
+                <a href="#_" class="close-btn">Close Terminal</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="lightbox-modal" id="lb-5">
+        <a href="#_" class="lightbox-backdrop"></a>
+        <div class="lightbox-asset">
+            <img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=2000&q=80" alt="HD">
+            <div class="lightbox-info">
+                <h3>Neural Map</h3>
+                <span class="badge">Abstract Form</span>
+                <p>An artificial neural network topology expanded into three-dimensional space. The glowing links highlight active deep-learning nodes processing massive streams of user data.</p>
+                <a href="#_" class="close-btn">Close Terminal</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="lightbox-modal" id="lb-6">
+        <a href="#_" class="lightbox-backdrop"></a>
+        <div class="lightbox-asset">
+            <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=2000&q=80" alt="HD">
+            <div class="lightbox-info">
+                <h3>Exoplanet Zeta</h3>
+                <span class="badge">Aerospace Logic</span>
+                <p>Deep-field space telescope captures of a newly discovered planet in the Zeta-Reticuli system. Analyzing atmospheric composition and potential habitats for carbon-based life forms.</p>
+                <a href="#_" class="close-btn">Close Terminal</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
